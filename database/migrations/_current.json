@@ -1,0 +1,357 @@
+{
+    "tables": {
+        "Articles": {
+            "tableName": "Articles",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "title": {
+                    "field": "title",
+                    "seqType": "Sequelize.STRING"
+                },
+                "visible": {
+                    "allowNull": false,
+                    "defaultValue": {
+                        "value": false
+                    },
+                    "field": "visible",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "desc": {
+                    "field": "desc",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "content": {
+                    "field": "content",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "managerId": {
+                    "field": "managerId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "categoryId": {
+                    "field": "categoryId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "image": {
+                    "field": "image",
+                    "seqType": "Sequelize.ARRAY(Sequelize.STRING)"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Categories": {
+            "tableName": "Categories",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "title": {
+                    "field": "title",
+                    "seqType": "Sequelize.STRING"
+                },
+                "desc": {
+                    "field": "desc",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "parentId": {
+                    "allowNull": false,
+                    "defaultValue": {
+                        "value": 0
+                    },
+                    "field": "parentId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Managers": {
+            "tableName": "Managers",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "active": {
+                    "allowNull": false,
+                    "defaultValue": {
+                        "value": true
+                    },
+                    "field": "active",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "login": {
+                    "field": "login",
+                    "seqType": "Sequelize.STRING"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "password": {
+                    "field": "password",
+                    "seqType": "Sequelize.STRING"
+                },
+                "role": {
+                    "field": "role",
+                    "seqType": "Sequelize.ARRAY(Sequelize.STRING)"
+                },
+                "langs": {
+                    "field": "langs",
+                    "seqType": "Sequelize.ARRAY(Sequelize.INTEGER)"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "ManagerDocBlocks": {
+            "tableName": "ManagerDocBlocks",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "managerId": {
+                    "field": "managerId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "table": {
+                    "field": "table",
+                    "seqType": "Sequelize.STRING"
+                },
+                "docId": {
+                    "field": "docId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "lang": {
+                    "field": "lang",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "ManagerLogs": {
+            "tableName": "ManagerLogs",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "managerId": {
+                    "field": "managerId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "type": {
+                    "field": "type",
+                    "seqType": "Sequelize.STRING"
+                },
+                "route": {
+                    "field": "route",
+                    "seqType": "Sequelize.STRING"
+                },
+                "data": {
+                    "field": "data",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "ManagerRoles": {
+            "tableName": "ManagerRoles",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "key": {
+                    "field": "key",
+                    "seqType": "Sequelize.STRING"
+                },
+                "data": {
+                    "field": "data",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "ManagerSessions": {
+            "tableName": "ManagerSessions",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "managerId": {
+                    "field": "managerId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "roles": {
+                    "field": "roles",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "permissions": {
+                    "field": "permissions",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "accessToken": {
+                    "field": "accessToken",
+                    "seqType": "Sequelize.STRING"
+                },
+                "refreshToken": {
+                    "field": "refreshToken",
+                    "seqType": "Sequelize.STRING"
+                },
+                "accessExpired": {
+                    "field": "accessExpired",
+                    "seqType": "Sequelize.STRING"
+                },
+                "refreshExpired": {
+                    "field": "refreshExpired",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Translations": {
+            "tableName": "Translations",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "docId": {
+                    "field": "docId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "table": {
+                    "field": "table",
+                    "seqType": "Sequelize.STRING"
+                },
+                "field": {
+                    "field": "field",
+                    "seqType": "Sequelize.STRING"
+                },
+                "value": {
+                    "field": "value",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "lang": {
+                    "field": "lang",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "revision": 5
+}

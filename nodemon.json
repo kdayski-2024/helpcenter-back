@@ -1,0 +1,9 @@
+{
+    "events": {
+        "start": "clear || cls"
+    },
+    "ignore": [
+        "uploads/**",
+        "uploads_dev/**"
+    ]
+}

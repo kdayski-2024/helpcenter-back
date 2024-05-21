@@ -1,0 +1,131 @@
+#!/usr/bin/env node
+
+const path = require("path");
+const commandLineArgs = require('command-line-args');
+const fs = require("fs");
+const Async = require("async");
+
+const migrate = require("./lib/migrate");
+const pathConfig = require('./lib/pathconfig');
+
+const optionDefinitions = [
+    { name: 'rev', alias: 'r', type: Number, description: 'Set migration revision (default: 0)', defaultValue: 0 },
+    { name: 'rollback', alias: 'b', type: Boolean, description: 'Rollback to specified revision', defaultValue: false },
+    { name: 'pos', alias: 'p', type: Number, description: 'Run first migration at pos (default: 0)', defaultValue: 0 },
+    { name: 'no-transaction', type: Boolean, description: 'Run each change separately instead of all in a transaction (allows it to fail and continue)', defaultValue: false },
+    { name: 'one', type: Boolean, description: 'Do not run next migrations', defaultValue: false },
+    { name: 'list', alias: 'l', type: Boolean, description: 'Show migration file list (without execution)', defaultValue: false },
+    { name: 'migrations-path', type: String, description: 'The path to the migrations folder' },
+    { name: 'models-path', type: String, description: 'The path to the models folder' },
+    { name: 'help', type: Boolean, description: 'Show this message' }
+];
+
+const options = commandLineArgs(optionDefinitions);
+
+// Windows support
+if (!process.env.PWD) {
+    process.env.PWD = process.cwd()
+}
+
+let {
+    migrationsDir,
+    modelsDir,
+    databaseDir
+} = pathConfig(options);
+
+if (!fs.existsSync(modelsDir)) {
+    console.log("Can't find models directory. Use `sequelize init` to create it")
+    return
+}
+
+if (!fs.existsSync(migrationsDir)) {
+    console.log("Can't find migrations directory. Use `sequelize init` to create it")
+    return
+}
+
+if (options.help) {
+    console.log("Simple sequelize migration execution tool\n\nUsage:");
+    optionDefinitions.forEach((option) => {
+        let alias = (option.alias) ? ` (-${option.alias})` : '\t';
+        console.log(`\t --${option.name}${alias} \t${option.description}`);
+    });
+    process.exit(0);
+}
+const { connection, db, dataTypes, queryTypes } = require(databaseDir)
+const sequelize = connection;
+const queryInterface = sequelize.getQueryInterface();
+
+// execute all migration from
+let fromRevision = options.rev;
+let fromPos = parseInt(options.pos);
+let stop = options.one;
+let rollback = options.rollback;
+let noTransaction = options['no-transaction'];
+
+let migrationFiles = fs.readdirSync(migrationsDir)
+    // filter JS files
+    .filter((file) => {
+        return (file.indexOf('.') !== 0) && (file.slice(-3) === '.js');
+    })
+    // sort by revision
+    .sort((a, b) => {
+        let revA = parseInt(path.basename(a).split('-', 2)[0]),
+            revB = parseInt(path.basename(b).split('-', 2)[0]);
+        if (rollback) {
+            if (revA < revB) return 1;
+            if (revA > revB) return -1;
+        } else {
+            if (revA < revB) return -1;
+            if (revA > revB) return 1;
+        }
+        return 0;
+    })
+    // remove all migrations before fromRevision
+    .filter((file) => {
+        let rev = parseInt(path.basename(file).split('-', 2)[0]);
+        return (rev >= fromRevision);
+    });
+
+
+if (options.list)
+    process.exit(0);
+
+connection
+    .authenticate()
+    .then(async () => {
+        await queryInterface.createTable('Migrations', {
+            id: {
+                type: dataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+                onDelete: 'CASCADE'
+            },
+            file: dataTypes.STRING
+        })
+
+        const migrations = await connection.query('SELECT * FROM "Migrations"', { type: queryTypes.SELECT });
+        const completedMigrations = migrations.map(o => o.file)
+        migrationFiles = migrationFiles.filter((el) => !completedMigrations.includes(el));
+        console.log("Migrations to execute:", migrationFiles);
+        Async.eachSeries(migrationFiles,
+            function (file, cb) {
+                console.log("Execute migration from file: " + file);
+                migrate.executeMigration(queryInterface, path.join(migrationsDir, file), !noTransaction, fromPos, rollback, async (err) => {
+                    if (stop)
+                        return cb("Stopped");
+                    const sql = `
+                        INSERT INTO "Migrations" (file)
+                        VALUES ('${file}');
+                    `
+                    await connection.query(sql, { type: queryTypes.INSERT });
+                    cb(err);
+                });
+                fromPos = 0;
+            },
+            function (err) {
+                console.log(err);
+                process.exit(0);
+            }
+        );
+    })
+

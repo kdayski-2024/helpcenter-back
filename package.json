@@ -1,0 +1,46 @@
+{
+  "name": "helpcenter-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "DEBUG=http,course,catalog,system,session,user,manager,crud,stats,other,integrator,adminPanel nodemon index.js",
+    "debug": "DEBUG=http,course,catalog,system,session,user,manager,crud,stats,other,integrator,adminPanel node index.js",
+    "start": "node index.js",
+    "killport": "kill-port 30002",
+    "db:seed": "node ./database/seeder.js",
+    "db:make": "./database/migrations/tool/makemigration.js",
+    "db:migrate": "./database/migrations/tool/runmigration.js",
+    "db:setmigrate": "./database/migrations/tool/setmigration.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.5",
+    "axios": "^1.6.8",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "dateformat": "^4.5.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-crud": "^4.0.1",
+    "express-sequelize-crud": "^6.2.0",
+    "is-empty": "^1.2.0",
+    "md5": "^2.3.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "object-hash": "^3.0.0",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.21.4",
+    "stripe": "^15.6.0",
+    "validatorjs": "^3.22.1"
+  },
+  "devDependencies": {
+    "command-line-args": "^5.2.1",
+    "deep-diff": "^1.0.2",
+    "sequelize-cli": "^6.6.2"
+  }
+}

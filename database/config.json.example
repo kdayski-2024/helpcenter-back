@@ -1,0 +1,38 @@
+{
+  "development": {
+    "username": "_dev",
+    "password": "***",
+    "database": "_dev",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false,
+    "query": {
+      "raw": true
+    }
+  },
+  "test": {
+    "username": "_test",
+    "password": "***",
+    "database": "_test",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false,
+    "query": {
+      "raw": true
+    }
+  },
+  "production": {
+    "username": "",
+    "password": "***",
+    "database": "",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false,
+    "query": {
+      "raw": true
+    }
+  }
+}
