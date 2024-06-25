@@ -5,14 +5,14 @@ var Sequelize = require('sequelize');
 /**
  * Actions summary:
  *
- * addColumn "file" to table "Articles"
+ * addColumn "orderId" to table "Categories"
  *
  **/
 
 var info = {
-    "revision": 4,
+    "revision": 7,
     "name": "noname",
-    "created": "2024-05-15T12:05:52.791Z",
+    "created": "2024-06-13T08:09:26.261Z",
     "comment": ""
 };
 
@@ -20,11 +20,11 @@ var migrationCommands = function(transaction) {
     return [{
         fn: "addColumn",
         params: [
-            "Articles",
-            "file",
+            "Categories",
+            "orderId",
             {
-                "type": Sequelize.ARRAY(Sequelize.STRING),
-                "field": "file"
+                "type": Sequelize.INTEGER,
+                "field": "orderId"
             },
             {
                 transaction: transaction
@@ -36,8 +36,8 @@ var rollbackCommands = function(transaction) {
     return [{
         fn: "removeColumn",
         params: [
-            "Articles",
-            "file",
+            "Categories",
+            "orderId",
             {
                 transaction: transaction
             }

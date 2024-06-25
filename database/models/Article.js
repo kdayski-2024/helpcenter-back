@@ -6,6 +6,7 @@ module.exports = {
     desc: DataTypes.TEXT,
     content: DataTypes.TEXT,
     managerId: DataTypes.INTEGER,
+    orderId: DataTypes.INTEGER,
     categoryId: DataTypes.INTEGER,
     image: DataTypes.ARRAY(DataTypes.STRING)
 }

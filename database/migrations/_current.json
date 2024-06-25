@@ -34,6 +34,10 @@
                     "field": "managerId",
                     "seqType": "Sequelize.INTEGER"
                 },
+                "orderId": {
+                    "field": "orderId",
+                    "seqType": "Sequelize.INTEGER"
+                },
                 "categoryId": {
                     "field": "categoryId",
                     "seqType": "Sequelize.INTEGER"
@@ -72,6 +76,10 @@
                 "desc": {
                     "field": "desc",
                     "seqType": "Sequelize.TEXT"
+                },
+                "orderId": {
+                    "field": "orderId",
+                    "seqType": "Sequelize.INTEGER"
                 },
                 "parentId": {
                     "allowNull": false,
@@ -353,5 +361,5 @@
             "indexes": []
         }
     },
-    "revision": 5
+    "revision": 7
 }

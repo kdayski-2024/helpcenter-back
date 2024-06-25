@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "DEBUG=http,course,catalog,system,session,user,manager,crud,stats,other,integrator,adminPanel nodemon index.js",
-    "debug": "DEBUG=http,course,catalog,system,session,user,manager,crud,stats,other,integrator,adminPanel node index.js",
+    "dev": "DEBUG=http,article,category,crud,system nodemon index.js",
+    "debug": "DEBUG=http,course,catalog,system,session,user,manager,crud,stats,other,adminPanel node index.js",
     "start": "node index.js",
     "killport": "kill-port 30002",
     "db:seed": "node ./database/seeder.js",

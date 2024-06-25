@@ -26,9 +26,11 @@ app.crud("manager_log", model.ManagerLog)
 app.get("/article_list", controller.article.getArticles)
 app.get("/article_main", controller.article.getArticleMain)
 app.get("/article_full/:articleId", controller.article.getArticle)
-app.get("/gategory_list", controller.category.getCategories)
+app.get("/category_list", controller.category.getCategories)
 app.post("/login", adminPanel.login)
 
+app.post("/set_translate", controller.system.setTranslate)
+app.get("/search", controller.system.search)
 app.use("/assets", express.static("uploads"))
 
 
@@ -42,70 +44,63 @@ db.connection.authenticate().then(() => {
         }
         app.listen(port, async function () {
             console.log("BD API Server ready on port " + port)
-            if (port == 7002) {
-                //!DEV
+            //!DEV
 
-                // axios
-                //     .post(
-                //         `http://localhost:${port}/login`,
-                //         {
-                //             username: 'admin',
-                //             password: '1',
-                //         },
-                //         {
-                //             headers: {
-                //             },
-                //         }
-                //     )
-                //     .then(function (response) {
-                //         // handle success
-                //         console.log(response.data);
-                //     })
-                //     .catch(function (error) {
-                //         // handle error
-                //         console.log(error)
-                //     })
-                // axios
-                //     .get(
-                //         `http://localhost:${port}/gategory_list?`, {
-                //         params: {
-                //             _start: 0,
-                //             _end: 999999,
-                //             parentId:1
-                //         },
-                //         headers: {
-                //             "Accept-Language": "en",
-                //         },
-                //     }
-                //     )
-                //     .then(function (response) {
-                //         // handle success
-                //         // console.log(response.data);
-                //     })
-                //     .catch(function (error) {
-                //         // handle error
-                //         console.log(error)
-                //     })
-                    // axios
-                    // .get(
-                    //     `http://localhost:${port}/article_main?`, {
-                    //     params: {
-                    //         categoryId: 0
-                    //     },
-                    //     headers: {
-                    //         "Accept-Language": "en",
-                    //     },
-                    // }
-                    // )
-                    // .then(function (response) {
-                    //     // handle success
-                    //     console.log(response.data);
-                    // })
-                    // .catch(function (error) {
-                    //     // handle error
-                    //     console.log(error)
-                    // })
-            }
+            // axios
+            //     .post(
+            //         `http://localhost:${port}/login`,
+            //         {
+            //             username: 'admin',
+            //             password: '1',
+            //         },
+            //         {
+            //             headers: {
+            //             },
+            //         }
+            //     )
+            //     .then(function (response) {
+            //         // handle success
+            //         console.log(response.data);
+            //     })
+            //     .catch(function (error) {
+            //         // handle error
+            //         console.log(error)
+            //     })
+            // axios
+            //     .get(
+            //         `http://localhost:${port}/set_translate/2`, {
+            //             headers: {
+            //                 "Accept-Language": "ru",
+            //             },
+            //     }
+            //     )
+            //     .then(function (response) {
+            //         // handle success
+            //         // console.log(response.data);
+            //     })
+            //     .catch(function (error) {
+            //         // handle error
+            //         console.log(error)
+            //     })
+            // axios
+            //     .get(
+            //         `http://localhost:${port}/article_main?`, {
+            //         params: {
+            //             parentId: 1
+            //         },
+            //         headers: {
+            //             "Accept-Language": "en",
+            //         },
+            //     }
+            //     )
+            //     .then(function (response) {
+            //         // handle success
+            //         console.log(response.data);
+            //     })
+            //     .catch(function (error) {
+            //         // handle error
+            //         console.log(error)
+            //     })
         })
     })
 })

@@ -34,12 +34,16 @@
                     "field": "managerId",
                     "seqType": "Sequelize.INTEGER"
                 },
+                "orderId": {
+                    "field": "orderId",
+                    "seqType": "Sequelize.INTEGER"
+                },
                 "categoryId": {
                     "field": "categoryId",
                     "seqType": "Sequelize.INTEGER"
                 },
-                "file": {
-                    "field": "file",
+                "image": {
+                    "field": "image",
                     "seqType": "Sequelize.ARRAY(Sequelize.STRING)"
                 },
                 "createdAt": {
@@ -353,5 +357,5 @@
             "indexes": []
         }
     },
-    "revision": 4
+    "revision": 6
 }

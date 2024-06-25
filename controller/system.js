@@ -1,16 +1,12 @@
+require("dotenv").config()
+const axios = require("axios")
 const db = require("../database")
-const { Op } = require("sequelize")
-var empty = require("is-empty")
+const empty = require("is-empty")
 const session = require("./session")
 const Translator = require("../lib/translator")
-let Validator = require("validatorjs")
-const nodemailer = require("nodemailer")
-const debugHttp = require("debug")("http")
 const debug = require("debug")("system")
 const systemSetting = require("../lib/systemSetting")
-const serviceApi = require("../lib/serviceApi")
-const Stripe = require("stripe")
-const stripe = Stripe("sk_test_4eC39HqLyjWDarjtT1zdp7dc")
+const apiUrl = process.env.AI_API_URL
 const System = {
     init: () => {
         return new Promise(async (resolve, reject) => {
@@ -41,6 +37,76 @@ const System = {
         res.setHeader("Access-Control-Expose-Headers", "X-Total-Count")
         res.setHeader("X-Total-Count", langs.length)
         return res.status(200).send(langs)
+    },
+    setTranslate: async (req, res) => {
+        debug("setTranslate")
+        const managerId = await session.getManagerId(req)
+        if (empty(managerId)) return res.status(401).send()
+        if (!(await session.hasManagerRole(["admin"], managerId)))
+            return res.status(403).send()
+        const { message, id} = req.body
+        const promt = `Без изменения формата markdown и не меняй строчный прописной формат букв переведи статью на Английский в официальном стиле: `
+        debug("start translate")
+        axios
+            .post(
+                `${apiUrl}/message`,
+                {
+                    message: promt + message,
+                }
+            )
+            .then(function (response) {
+                debug("translate done article " + id)
+                db.models.Article.update({content:response.data.answear}, {
+                    where: { id },
+                })
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+
+        res.status(200).send({ success: true })
+    },
+    search: async (req, res) => {
+        
+        const { q } = req.query
+        const searchModels = [
+            db.models.Article
+        ]
+        const limit = 20
+        let promiseArr = []
+        searchModels.forEach((model) => {
+            promiseArr.push(
+                new Promise(async (resolve, reject) => {
+                    const searchResuls = await model.findAll({
+                        where: {
+                            [db.Op.or]: [
+                                {
+                                    title: {
+                                        [db.Op.iLike]: "%" + q + "%",
+                                    },
+                                },
+                                {
+                                    desc: {
+                                        [db.Op.iLike]: "%" + q + "%",
+                                    },
+                                },
+                                {
+                                    content: {
+                                        [db.Op.iLike]: "%" + q + "%",
+                                    },
+                                },
+                            ],
+                        },
+                        limit,
+                        raw: true,
+                    })
+                    resolve({ name: model.name, data: searchResuls })
+                })
+            )
+        })
+        Promise.all(promiseArr).then((searchResuls) => {
+            res.status(200).send(searchResuls)
+        })
     },
 }
 
