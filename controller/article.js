@@ -9,11 +9,11 @@ const Article = {
         debug("getArticleMain")
         let validation = new Validator(req.query, { parentId: 'required|numeric' })
         if (validation.fails()) return res.status(500).send(validation.errors.all())
-        
+
         const lang = !empty(req) ? req.get('Accept-Language') : ''
         const { parentId } = req.query
         let data = { rows: [] }
-        
+
         let categories = await db.models.Category.findAll({
             attributes: { exclude: ['createdAt', 'updatedAt'] },
             order: [
@@ -28,12 +28,12 @@ const Article = {
         }
 
         let articles = await db.models.Article.findAll({
-            where: {visible:true},
+            where: { visible: true },
             attributes: { exclude: ['createdAt', 'updatedAt', 'content'] },
         })
 
         articles = await Translator.translateArray({ modelName: db.models.Article.name, data: articles, lang })
-        
+
         // Расталкиваем статьи в категории
         for (const article of articles) {
             const findedCategory = categories.find((o) => o.id == article.categoryId)
@@ -43,13 +43,18 @@ const Article = {
                 debug(`Article ${article.id} not have category`)
             }
         }
+        // Сортируем статьи в каждой категории по orderId
+        for (const category of categories) {
+            category.articles.sort((a, b) => a.orderId - b.orderId)
+        }
+
         // Формируем главное дерево
         for (const category of categories) {
-            if(parentId==0 ){
-                if(category.parentId == 0)
+            if (parentId == 0) {
+                if (category.parentId == 0)
                     data.rows.push(category)
-            }else{
-                if(category.id == parentId)
+            } else {
+                if (category.id == parentId)
                     data.rows.push(category)
             }
         }
@@ -58,7 +63,7 @@ const Article = {
                 const findedCategory = data.rows.find((o) => o.id == category.parentId)
                 if (!empty(findedCategory)) {
                     findedCategory.categories.push(category)
-                } 
+                }
             }
         }
         res.status(200).send({ data })
@@ -69,7 +74,7 @@ const Article = {
 
         const lang = !empty(req) ? req.get('Accept-Language') : ''
         const { _end = 5, _start = 0, categoryId } = req.query
-        const articleWhere = { visible: true}
+        const articleWhere = { visible: true }
         if (!empty(categoryId)) {
             articleWhere.categoryId = categoryId
         }

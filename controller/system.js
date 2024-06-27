@@ -44,7 +44,7 @@ const System = {
         if (empty(managerId)) return res.status(401).send()
         if (!(await session.hasManagerRole(["admin"], managerId)))
             return res.status(403).send()
-        const { message, id} = req.body
+        const { message, id } = req.body
         const promt = `Без изменения формата markdown и не меняй строчный прописной формат букв переведи статью на Английский в официальном стиле: `
         debug("start translate")
         axios
@@ -56,7 +56,7 @@ const System = {
             )
             .then(function (response) {
                 debug("translate done article " + id)
-                db.models.Article.update({content:response.data.answear}, {
+                db.models.Article.update({ content: response.data.answear }, {
                     where: { id },
                 })
             })
@@ -67,46 +67,79 @@ const System = {
         res.status(200).send({ success: true })
     },
     search: async (req, res) => {
-        
+
         const { q } = req.query
-        const searchModels = [
+        if (typeof q === 'string' && q.length < 3)
+            return res.status(500).send({ success: false, error: 'Query length less than 3' })
+        let searchModels = [
             db.models.Article
         ]
+        const lang = !empty(req) ? req.get('Accept-Language') : ''
+
         const limit = 20
-        let promiseArr = []
-        searchModels.forEach((model) => {
-            promiseArr.push(
-                new Promise(async (resolve, reject) => {
-                    const searchResuls = await model.findAll({
-                        where: {
-                            [db.Op.or]: [
-                                {
-                                    title: {
-                                        [db.Op.iLike]: "%" + q + "%",
+        if (lang == 'en') {
+            let promiseArr = []
+            searchModels.forEach((model) => {
+                promiseArr.push(
+                    new Promise(async (resolve, reject) => {
+                        const searchResuls = await model.findAll({
+                            attributes: { exclude: ['createdAt', 'updatedAt', 'content'] },
+                            where: {
+                                [db.Op.or]: [
+                                    {
+                                        title: {
+                                            [db.Op.iLike]: "%" + q + "%",
+                                        },
                                     },
-                                },
-                                {
-                                    desc: {
-                                        [db.Op.iLike]: "%" + q + "%",
+                                    {
+                                        desc: {
+                                            [db.Op.iLike]: "%" + q + "%",
+                                        },
                                     },
-                                },
-                                {
-                                    content: {
-                                        [db.Op.iLike]: "%" + q + "%",
+                                    {
+                                        content: {
+                                            [db.Op.iLike]: "%" + q + "%",
+                                        },
                                     },
-                                },
-                            ],
-                        },
-                        limit,
-                        raw: true,
+                                ],
+                            },
+                            limit,
+                            raw: true,
+                        })
+                        resolve({ name: model.name, data: searchResuls })
                     })
-                    resolve({ name: model.name, data: searchResuls })
+                )
+            })
+            Promise.all(promiseArr).then((searchResuls) => {
+                res.status(200).send(searchResuls)
+            })
+        } else {
+            if (lang == 'ru') {
+
+                const findedArticles = await db.models.Translation.findAll({
+                    where: {
+                        lang,
+                        table: 'Article',
+                        [db.Op.or]: [
+                            {
+                                value: {
+                                    [db.Op.iLike]: "%" + q + "%",
+                                },
+                            }]
+                    }
                 })
-            )
-        })
-        Promise.all(promiseArr).then((searchResuls) => {
-            res.status(200).send(searchResuls)
-        })
+                let result = [{name: 'Articles', data:[]}]
+                if (findedArticles.length > 0) {
+                    const articlesIds = findedArticles.map(o => o.docId)
+                    let articles = await db.models.Article.findAll({where:{id:articlesIds}})
+                    articles = await Translator.translateArray({ modelName: db.models.Article.name, data: articles, lang })
+                    result[0].data = articles
+                }
+                res.status(200).send(result)
+            } else {
+                res.status(200).send({ success: false, error: 'Unsupported language' })
+            }
+        }
     },
 }
 
