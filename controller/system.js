@@ -44,8 +44,26 @@ const System = {
         if (empty(managerId)) return res.status(401).send()
         if (!(await session.hasManagerRole(["admin"], managerId)))
             return res.status(403).send()
-        const { message, id } = req.body
-        const promt = `Без изменения формата markdown и не меняй строчный прописной формат букв переведи статью на Английский в официальном стиле: `
+
+        const lang = !empty(req) ? req.get('Accept-Language') : ''
+        console.log(lang)
+        const { message, id, l } = req.body
+        console.log(l)
+        let langString = ''
+        switch (l) {
+            case 'en':
+                langString = 'Английский'
+                break;
+            case 'es':
+                langString = 'Испанский'
+                break;
+            case 'fr':
+                langString = 'Французкий'
+                break;
+            default:
+                break;
+        }
+        const promt = `Без изменения формата markdown и не меняй строчный прописной формат букв переведи статью на ${langString} в официальном стиле: `
         debug("start translate")
         axios
             .post(
@@ -54,17 +72,29 @@ const System = {
                     message: promt + message,
                 }
             )
-            .then(function (response) {
+            .then(async function (response) {
                 debug("translate done article " + id)
-                db.models.Article.update({ content: response.data.answear }, {
-                    where: { id },
-                })
+                if (l == 'en') {
+                    db.models.Article.update({ content: response.data.answear }, {
+                        where: { id },
+                    })
+                } else {
+                    const tArticle = await db.models.Translation.findOne({
+                        where: { lang: l, table: 'Article', field: 'content', docId: id }
+                    })
+                    if (empty(tArticle)) {
+                        await db.models.Translation.create({ lang: l, table: 'Article', field: 'content', value: response.data.answear, docId: id })
+                    } else {
+                        await db.models.Translation.update({ value: response.data.answear }, {where:{ lang: l, table: 'Article', field: 'content', docId: id }})
+                    }
+                    console.log(tArticle)
+                    res.status(200).send({ success: true })
+                }
             })
             .catch(function (error) {
                 console.log(error)
+                res.status(500).send({ success: false })
             })
-
-        res.status(200).send({ success: true })
     },
     search: async (req, res) => {
 
@@ -128,10 +158,10 @@ const System = {
                             }]
                     }
                 })
-                let result = [{name: 'Articles', data:[]}]
+                let result = [{ name: 'Articles', data: [] }]
                 if (findedArticles.length > 0) {
                     const articlesIds = findedArticles.map(o => o.docId)
-                    let articles = await db.models.Article.findAll({where:{id:articlesIds}})
+                    let articles = await db.models.Article.findAll({ where: { id: articlesIds } })
                     articles = await Translator.translateArray({ modelName: db.models.Article.name, data: articles, lang })
                     result[0].data = articles
                 }

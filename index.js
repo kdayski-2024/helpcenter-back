@@ -7,7 +7,6 @@ const controller = require("./lib/controllerLoader")
 const adminPanel = require("./lib/adminPanel")
 const axios = require("axios")
 const systemSetting = require("./lib/systemSetting")
-const serviceApi = require("./lib/serviceApi")
 const empty = require("is-empty")
 require("dotenv").config()
 
