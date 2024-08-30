@@ -11,16 +11,22 @@ const Article = {
         if (validation.fails()) return res.status(500).send(validation.errors.all())
 
         const lang = !empty(req) ? req.get('Accept-Language') : ''
+        console.log(lang)
         const { parentId } = req.query
         let data = { rows: [] }
-
         let categories = await db.models.Category.findAll({
+            where: {
+                visible: true,
+                visibleLang: {
+                    [db.Op.contains]: [lang]
+                }
+            },
             attributes: { exclude: ['createdAt', 'updatedAt'] },
             order: [
                 ['orderId', 'ASC']
             ]
         })
-
+        console.log(categories)
         categories = await Translator.translateArray({ modelName: db.models.Category.name, data: categories, lang })
         for (const category of categories) {
             category.articles = []
@@ -28,7 +34,12 @@ const Article = {
         }
 
         let articles = await db.models.Article.findAll({
-            where: { visible: true },
+            where: {
+                visible: true,
+                visibleLang: {
+                    [db.Op.contains]: [lang]
+                }
+            },
             attributes: { exclude: ['createdAt', 'updatedAt', 'content'] },
         })
 

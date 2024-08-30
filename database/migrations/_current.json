@@ -46,6 +46,10 @@
                     "field": "image",
                     "seqType": "Sequelize.ARRAY(Sequelize.STRING)"
                 },
+                "visibleLang": {
+                    "field": "visibleLang",
+                    "seqType": "Sequelize.ARRAY(Sequelize.STRING)"
+                },
                 "createdAt": {
                     "allowNull": false,
                     "field": "createdAt",
@@ -73,6 +77,14 @@
                     "field": "title",
                     "seqType": "Sequelize.STRING"
                 },
+                "visible": {
+                    "allowNull": false,
+                    "defaultValue": {
+                        "value": false
+                    },
+                    "field": "visible",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
                 "desc": {
                     "field": "desc",
                     "seqType": "Sequelize.TEXT"
@@ -88,6 +100,10 @@
                     },
                     "field": "parentId",
                     "seqType": "Sequelize.INTEGER"
+                },
+                "visibleLang": {
+                    "field": "visibleLang",
+                    "seqType": "Sequelize.ARRAY(Sequelize.STRING)"
                 },
                 "createdAt": {
                     "allowNull": false,
@@ -361,5 +377,5 @@
             "indexes": []
         }
     },
-    "revision": 7
+    "revision": 8
 }

@@ -8,6 +8,7 @@ module.exports = {
     managerId: DataTypes.INTEGER,
     orderId: DataTypes.INTEGER,
     categoryId: DataTypes.INTEGER,
-    image: DataTypes.ARRAY(DataTypes.STRING)
+    image: DataTypes.ARRAY(DataTypes.STRING),
+    visibleLang: DataTypes.ARRAY(DataTypes.STRING)
 }
 

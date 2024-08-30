@@ -81,21 +81,22 @@ db.connection.authenticate().then(() => {
             //         // handle error
             //         console.log(error)
             //     })
-            axios
-                .get(
-                    `http://localhost:${port}/search?q=walletconnect.com`, {
+            // axios
+            //     .get(
+            //         `http://localhost:${port}/search?q=walletconnect.com`, {
                     
-                    headers: {
-                        "Accept-Language": "ru",
-                    },
-                }
-                )
-                .then(function (response) {
-                    console.log(response.data);
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
+            //         headers: {
+            //             "Accept-Language": "ru",
+            //         },
+            //     }
+            //     )
+            //     .then(function (response) {
+            //         console.log(response.data);
+            //     })
+            //     .catch(function (error) {
+            //         console.log(error)
+            //     })
+
         })
     })
 })

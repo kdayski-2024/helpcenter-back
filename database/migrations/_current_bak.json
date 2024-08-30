@@ -77,6 +77,10 @@
                     "field": "desc",
                     "seqType": "Sequelize.TEXT"
                 },
+                "orderId": {
+                    "field": "orderId",
+                    "seqType": "Sequelize.INTEGER"
+                },
                 "parentId": {
                     "allowNull": false,
                     "defaultValue": {
@@ -357,5 +361,5 @@
             "indexes": []
         }
     },
-    "revision": 6
+    "revision": 7
 }
